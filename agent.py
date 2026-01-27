@@ -10,7 +10,6 @@ load_dotenv()
 # trigger ci cd
 #one more trigger
 # purpose
-#testing
 
 
 class Assistant(Agent):
