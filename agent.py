@@ -22,7 +22,9 @@ server = AgentServer()
 async def my_agent(ctx: agents.JobContext):
     session = AgentSession(
         llm=google.beta.realtime.RealtimeModel(
-            voice="Puck"
+            voice="Puck",
+            model="gemini-2.5-flash-native-audio-preview-09-2025",
+
         )
     )
 
