@@ -9,7 +9,6 @@ from livekit.plugins import google
 load_dotenv()
 # trigger ci cd
 #one more trigger
-# purpose
 
 
 class Assistant(Agent):
