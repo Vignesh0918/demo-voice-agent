@@ -1,1 +1,40 @@
-hello
+name: Deploy EC2 Instance
+
+on:
+  push:
+    branches:
+      - vicky
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/marvel/demo-voice-agent
+
+            git pull origin vicky
+
+            docker stop livekit-agent || true
+            docker rm livekit-agent || true
+
+            docker build -t livekit-voice-agent .
+
+            docker run -d \
+              --name livekit-agent \
+              --restart unless-stopped \
+              -e LIVEKIT_URL="${{ secrets.LIVEKIT_URL }}" \
+              -e LIVEKIT_API_KEY="${{ secrets.LIVEKIT_API_KEY }}" \
+              -e LIVEKIT_API_SECRET="${{ secrets.LIVEKIT_API_SECRET }}" \
+              -e GOOGLE_API_KEY="${{ secrets.GOOGLE_API_KEY }}" \
+              livekit-voice-agent
