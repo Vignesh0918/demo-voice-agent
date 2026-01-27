@@ -31,7 +31,9 @@ jobs:
             set -ex
 
             cd ~/marvel/demo-voice-agent
-            git pull origin vicky
+            git pull origin ${{ github.ref_name }}
+
+            docker system prune -af || true
 
             docker stop livekit-agent || true
             docker rm livekit-agent || true
