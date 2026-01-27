@@ -21,14 +21,14 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          timeout: 60s
+
+          timeout: 300s
+          command_timeout: 30m
+          request_pty: true
           script_stop: true
 
-          # ✅ THIS IS THE KEY FIX
-          envs: LIVEKIT_URL,LIVEKIT_API_KEY,LIVEKIT_API_SECRET,GOOGLE_API_KEY
-
           script: |
-            set -e
+            set -ex
 
             cd ~/marvel/demo-voice-agent
             git pull origin vicky
@@ -41,8 +41,8 @@ jobs:
             docker run -d \
               --name livekit-agent \
               --restart unless-stopped \
-              -e LIVEKIT_URL=$LIVEKIT_URL \
-              -e LIVEKIT_API_KEY=$LIVEKIT_API_KEY \
-              -e LIVEKIT_API_SECRET=$LIVEKIT_API_SECRET \
-              -e GOOGLE_API_KEY=$GOOGLE_API_KEY \
+              -e LIVEKIT_URL=${{ secrets.LIVEKIT_URL }} \
+              -e LIVEKIT_API_KEY=${{ secrets.LIVEKIT_API_KEY }} \
+              -e LIVEKIT_API_SECRET=${{ secrets.LIVEKIT_API_SECRET }} \
+              -e GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }} \
               livekit-voice-agent
