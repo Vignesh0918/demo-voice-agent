@@ -27,22 +27,27 @@ jobs:
           request_pty: true
           script_stop: true
 
-          script: |
+          script:
+
+            |
+
             set -ex
-
             cd ~/marvel/demo-voice-agent
-            git pull origin ${{ github.ref_name }}
 
-            docker system prune -af || true
+            cat <<EOF > .env
+            LIVEKIT_URL=${{ secrets.LIVEKIT_URL }}
+            LIVEKIT_API_KEY=${{ secrets.LIVEKIT_API_KEY }}
+            LIVEKIT_API_SECRET=${{ secrets.LIVEKIT_API_SECRET }}
+            GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
+            EOF
 
             docker stop livekit-agent || true
             docker rm livekit-agent || true
 
             docker build -t livekit-voice-agent .
 
-            docker run -d --name livekit-agent --restart unless-stopped \
-            -e LIVEKIT_URL="${{ secrets.LIVEKIT_URL }}" \
-            -e LIVEKIT_API_KEY="${{ secrets.LIVEKIT_API_KEY }}" \
-            -e LIVEKIT_API_SECRET="${{ secrets.LIVEKIT_API_SECRET }}" \
-            -e GOOGLE_API_KEY="${{ secrets.GOOGLE_API_KEY }}" \
+            docker run -d \
+            --name livekit-agent \
+            --restart unless-stopped \
+            --env-file .env \
             livekit-voice-agent 
