@@ -41,6 +41,8 @@ jobs:
             GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
             EOF
 
+            git pull origin main || git pull origin vicky
+
             docker stop livekit-agent || true
             docker rm livekit-agent || true
 
